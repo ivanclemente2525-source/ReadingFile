@@ -64,5 +64,47 @@ namespace ReadingFile
 
             }
         }
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+            try
+            {
+               
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                openFileDialog.Title = "Browse Text Files"; 
+                openFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"; 
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string fullPath = openFileDialog.FileName;
+
+                    if (!File.Exists(fullPath))
+                    {
+                        throw new FileNotFoundException("The selected file does not exist.");
+                    }
+
+                    using (StreamReader reader = new StreamReader(fullPath)) 
+                    {
+                        txtInput.Clear(); 
+
+                        string line;
+                        while ((line = reader.ReadLine()) != null) 
+                        {
+                            txtInput.AppendText(line + Environment.NewLine);
+                        }
+                    }
+
+                    MessageBox.Show("File successfully opened!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+                MessageBox.Show(ex.Message, "File Not Found Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
     }
 }
